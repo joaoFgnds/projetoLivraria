@@ -8,6 +8,17 @@ package br.com.senactech.MCadastroPessoa.view;
 import javax.swing.table.DefaultTableModel;
 import br.com.senactech.MCadastroPessoa.model.editora;
 import static Livraria_main.TLivrariaOOJF.cadEditoras;
+import br.com.senactech.MCadastroPessoa.model.cliente;
+import br.com.senactech.MCadastroPessoa.services.ClienteServicos;
+import br.com.senactech.MCadastroPessoa.services.EditoraServicos;
+import br.com.senactech.MCadastroPessoa.services.ServicosFactory;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -15,20 +26,38 @@ import static Livraria_main.TLivrariaOOJF.cadEditoras;
  */
 public class jfEditora extends javax.swing.JFrame {
 
+    JButton btnClick = null;
+
     /**
      * Creates new form jfEditora
      */
-    public jfEditora() {
+    public jfEditora() throws SQLException {
         initComponents();
-        addRowToTable();
+        addRowToTableBD();
     }
 
-    public void addRowToTable() {
+//    public void addRowToTable() {
+//        DefaultTableModel model = (DefaultTableModel) jtEditora.getModel();
+//        model.getDataVector().removeAllElements();
+//        model.fireTableDataChanged();
+//        Object rowData[] = new Object[5];//define vetor das colunas
+//        for (editora listEdt : cadEditoras.getEditora()) {
+//            rowData[0] = listEdt.getIdEditora();
+//            rowData[1] = listEdt.getNmEditora();
+//            rowData[2] = listEdt.getEndereco();
+//            rowData[3] = listEdt.getTelefone();
+//            rowData[4] = listEdt.getGerente();
+//            model.addRow(rowData);
+//        }
+//
+//    }
+    public void addRowToTableBD() throws SQLException {
         DefaultTableModel model = (DefaultTableModel) jtEditora.getModel();
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
         Object rowData[] = new Object[5];//define vetor das colunas
-        for (editora listEdt : cadEditoras.getEditora()) {
+        EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+        for (editora listEdt : editoraS.ListaEditoras()) {
             rowData[0] = listEdt.getIdEditora();
             rowData[1] = listEdt.getNmEditora();
             rowData[2] = listEdt.getEndereco();
@@ -58,12 +87,15 @@ public class jfEditora extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jtfEndereco = new javax.swing.JTextField();
-        jtfTelefone = new javax.swing.JTextField();
         jtfGerente = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtEditora = new javax.swing.JTable();
         jbCancelar = new javax.swing.JButton();
         jbLimpar = new javax.swing.JButton();
+        jbDeletar = new javax.swing.JButton();
+        jbEditar = new javax.swing.JButton();
+        jbConfirmar = new javax.swing.JButton();
+        jtfTelefone = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -102,9 +134,14 @@ public class jfEditora extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jtEditora.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtEditoraMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtEditora);
 
-        jbCancelar.setText("Cancelar");
+        jbCancelar.setText("Sair");
         jbCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbCancelarActionPerformed(evt);
@@ -118,39 +155,87 @@ public class jfEditora extends javax.swing.JFrame {
             }
         });
 
+        jbDeletar.setText("Deletar");
+        jbDeletar.setEnabled(false);
+        jbDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbDeletarActionPerformed(evt);
+            }
+        });
+
+        jbEditar.setText("Editar");
+        jbEditar.setEnabled(false);
+        jbEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEditarActionPerformed(evt);
+            }
+        });
+
+        jbConfirmar.setText("Confirmar");
+        jbConfirmar.setEnabled(false);
+        jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbConfirmarActionPerformed(evt);
+            }
+        });
+
+        try {
+            jtfTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##)#####-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        jtfTelefone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtfTelefoneActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jtfNomeEditora))
-                    .addComponent(jSeparator2)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jbSalvar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                                .addComponent(jbLimpar)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jSeparator2)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jbEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jbConfirmar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jbDeletar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jbCancelar))
-                            .addComponent(jtfEndereco)
-                            .addComponent(jtfTelefone)
-                            .addComponent(jtfGerente))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 1, Short.MAX_VALUE)
-                .addContainerGap())
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel5))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(jtfGerente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                                            .addComponent(jtfEndereco, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jtfTelefone, javax.swing.GroupLayout.Alignment.LEADING)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jbSalvar)
+                                        .addGap(52, 52, 52)
+                                        .addComponent(jbLimpar))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jtfNomeEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -180,29 +265,51 @@ public class jfEditora extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbSalvar)
-                    .addComponent(jbCancelar)
                     .addComponent(jbLimpar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbDeletar)
+                    .addComponent(jbEditar)
+                    .addComponent(jbConfirmar)
+                    .addComponent(jbCancelar))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
-        // TODO add your handling code here:
-        editora edt = new editora();
-        edt.setNmEditora(jtfNomeEditora.getText());
-        edt.setEndereco(jtfEndereco.getText());
-        edt.setGerente(jtfGerente.getText());
-        edt.setTelefone(jtfTelefone.getText());
-        edt.setIdEditora(cadEditoras.addIdEdt());
 
-        cadEditoras.addEditora(edt);
-        addRowToTable();
-        jbLimpar.doClick();
-        jtfNomeEditora.requestFocus();
+        // TODO add your handling code here:
+        // btnClick = (JButton) evt.getSource();
+        // System.out.println(btnClick.getText());
+        if (validaInputs()) {
+            int id = 0;
+            // cadPessoas.gerarId();
+            String nmEditora = jtfNomeEditora.getText();
+            String edereco = jtfEndereco.getText();
+            String telefone = jtfTelefone.getText();
+            String gerente = jtfGerente.getText();
+            
+            editora e = new editora(id, nmEditora, edereco, telefone, gerente);
+            //cadPessoas.add(p);
+            EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+            try {
+                editoraS.cadastrarEditora(e);
+                jbLimpar.doClick();
+                //addRowToTable();
+                addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "editora foi salva com sucesso!");
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(rootPane,
+                        "Erro! " + ex.getMessage(),
+                        "erro", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
+
     }//GEN-LAST:event_jbSalvarActionPerformed
 
     private void jbCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCancelarActionPerformed
@@ -218,6 +325,172 @@ public class jfEditora extends javax.swing.JFrame {
         jtfGerente.setText("");
     }//GEN-LAST:event_jbLimparActionPerformed
 
+    private Boolean validaInputs() {
+        EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+        String telefone = jtfTelefone.getText().toUpperCase();
+        if (jtfNomeEditora.getText().isBlank()
+                || jtfEndereco.getText().isBlank()
+                || jtfTelefone.getText().isBlank()
+                || jtfGerente.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this,
+                    "Todos os campos devem ser preenchidos!",
+                    ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+            jtfNomeEditora.requestFocus();
+            return false;
+        }
+
+        if (telefone.length() < 14) {
+            JOptionPane.showMessageDialog(this,
+                    "Telefone informado esta incorreto",
+                    ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+            jtfTelefone.requestFocus();
+            return false;
+        }
+
+//        if (btnClick.getText() == "Salvar") {
+//            //EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+//             try {
+//                if (!editoraS.verNomeeditora(jtfNomeEditora.getText())) {
+//                    JOptionPane.showMessageDialog(this,
+//                            "Nome da editora já cadastrado!!!",
+//                            ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+//                    jtfNomeEditora.requestFocus();
+//                    return false;
+//                }
+//            } catch (SQLException ex) {
+//                Logger.getLogger(jfEditora.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+
+//
+//        try {
+//            if (editoraS.verNomeeditora(jtfNomeEditora.getText())) {
+//                //clienteS.verCPF(jtfCpfCnpj.getText())) {
+//                JOptionPane.showMessageDialog(this,
+//                        "editora com este nome já cadastrado!!!",
+//                        ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+//                jtfNomeEditora.requestFocus();
+//                return false;
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+      return true;
+    }
+
+
+    private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            jbEditar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbDeletar.setEnabled(false);
+            jbConfirmar.setEnabled(true);
+            jbLimpar.setText("Cancelar");
+
+            int linha = jtEditora.getSelectedRow();
+
+            int id = (int) jtEditora.getValueAt(linha, 0);
+
+            EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+
+            editora e = editoraS.getByDocBD(id);
+
+            jtfNomeEditora.setText(e.getNmEditora());
+            jtfEndereco.setText(e.getEndereco());
+            jtfTelefone.setText(e.getTelefone());
+            jtfGerente.setText(e.getGerente());
+
+        } catch (SQLException ex) {
+            Logger.getLogger(jfEditora.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbEditarActionPerformed
+
+    private void jbDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeletarActionPerformed
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            jbEditar.setEnabled(false);
+            int linha;
+            int id;
+            linha = jtEditora.getSelectedRow();
+            id = (int) jtEditora.getValueAt(linha, 0);
+            EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+            editora e = editoraS.getByDocBD(id);
+
+            Object[] resp = {"Sim", "Não"};
+            int resposta = JOptionPane.showOptionDialog(this,
+                    "Deseja realmente deletar " + e.getNmEditora() + "?",
+                    ".: Deletar :.", JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.WARNING_MESSAGE, null, resp, resp[0]);
+            if (resposta == 0) {
+                editoraS.deletareditoa(e.getIdEditora());
+                //cadCarros.deletar(c);
+                addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "editora deletada com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Entendemos sua decisão!",
+                        ".: Deletar :.", JOptionPane.INFORMATION_MESSAGE);
+            }
+            jbLimpar.doClick();
+        } catch (SQLException ex) {
+            Logger.getLogger(jfEditora.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jbDeletarActionPerformed
+
+    public void jTableFilterClear() {
+        DefaultTableModel model = (DefaultTableModel) jtEditora.getModel();
+        final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        jtEditora.setRowSorter(sorter);
+        sorter.setRowFilter(null);
+    }
+
+    private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
+
+        //Pessoa p = cadPessoas.getByDoc(jtfCPF.getText());
+        if (validaInputs()) {
+            try {
+                EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+                editora E = editoraS.getByDocBDnome(jtfNomeEditora.getText());
+
+                //p.setCpf(jtfCPF.getText());
+                E.setEndereco(jtfEndereco.getText());
+                E.setTelefone(jtfTelefone.getText());
+                E.setGerente(jtfGerente.getText());
+
+                editoraS.editarCliente(E);
+                addRowToTableBD();
+
+            } catch (SQLException ex) {
+                Logger.getLogger(jfEditora.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            jbLimpar.doClick();
+            jbLimpar.setText("Limpar");
+            jTableFilterClear();
+            String msg = "Dados atualizados com sucesso!";
+            JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            jbLimpar.doClick();
+            jtfNomeEditora.setEnabled(true);
+
+        }
+    }//GEN-LAST:event_jbConfirmarActionPerformed
+
+    private void jtEditoraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtEditoraMouseClicked
+        // TODO add your handling code here:
+        jbDeletar.setEnabled(true);
+        jbEditar.setEnabled(true);
+
+    }//GEN-LAST:event_jtEditoraMouseClicked
+
+    private void jtfTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfTelefoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtfTelefoneActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -232,23 +505,34 @@ public class jfEditora extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(jfEditora.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jfEditora.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(jfEditora.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jfEditora.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(jfEditora.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jfEditora.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(jfEditora.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(jfEditora.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new jfEditora().setVisible(true);
+                try {
+                    new jfEditora().setVisible(true);
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(jfEditora.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -263,12 +547,15 @@ public class jfEditora extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JButton jbCancelar;
+    private javax.swing.JButton jbConfirmar;
+    private javax.swing.JButton jbDeletar;
+    private javax.swing.JButton jbEditar;
     private javax.swing.JButton jbLimpar;
     private javax.swing.JButton jbSalvar;
     private javax.swing.JTable jtEditora;
     private javax.swing.JTextField jtfEndereco;
     private javax.swing.JTextField jtfGerente;
     private javax.swing.JTextField jtfNomeEditora;
-    private javax.swing.JTextField jtfTelefone;
+    private javax.swing.JFormattedTextField jtfTelefone;
     // End of variables declaration//GEN-END:variables
 }

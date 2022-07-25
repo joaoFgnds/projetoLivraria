@@ -9,6 +9,7 @@ import br.com.senactech.MCadastroPessoa.dao.DAOFactory;
 import br.com.senactech.MCadastroPessoa.dao.vendaDAO;
 import br.com.senactech.MCadastroPessoa.model.vendaLivro;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,4 +20,11 @@ public class vendaServicos {
         vendaDAO vDAO = DAOFactory.getvendaDAO();
         vDAO.vendaLivro(vVO);
     }
-}
+    
+    public ArrayList<vendaLivro> getVendas() throws SQLException {
+        vendaDAO vDAO = DAOFactory.getvendaDAO();
+        return vDAO.buscarVendaLivros();
+    }
+ 
+    }
+

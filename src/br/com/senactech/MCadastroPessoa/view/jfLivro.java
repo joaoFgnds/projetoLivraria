@@ -10,6 +10,14 @@ import javax.swing.table.DefaultTableModel;
 import br.com.senactech.MCadastroPessoa.model.livro;
 import static Livraria_main.TLivrariaOOJF.cadEditoras;
 import static Livraria_main.TLivrariaOOJF.cadLivros;
+import br.com.senactech.MCadastroPessoa.services.EditoraServicos;
+import br.com.senactech.MCadastroPessoa.services.ServicosFactory;
+import br.com.senactech.MCadastroPessoa.services.LivroServicos;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -20,9 +28,9 @@ public class jfLivro extends javax.swing.JFrame {
     /**
      * Creates new form jfLivro
      */
-    public jfLivro() {
+    public jfLivro() throws SQLException {
         initComponents();
-        addRowToTable();
+        addRowToTableBD();
         this.addEditoraJCB();
     }
 
@@ -33,12 +41,13 @@ public class jfLivro extends javax.swing.JFrame {
         });
     }
 
-    public void addRowToTable() {
+    public void addRowToTableBD() throws SQLException {
         DefaultTableModel model = (DefaultTableModel) jtLivros.getModel();
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
         Object rowData[] = new Object[8];//define vetor das colunas
-        for (livro listLiv : cadLivros.getLivros()) {
+        LivroServicos livroS = ServicosFactory.getLivroServicos();
+        for (livro listLiv : livroS.listaLivros()) {
             rowData[0] = listLiv.getIdLivro();
             rowData[1] = listLiv.getTitulo();
             rowData[2] = listLiv.getAssunto();
@@ -71,7 +80,7 @@ public class jfLivro extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        jLEditora = new javax.swing.JLabel();
         jtfTitulo = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtLivros = new javax.swing.JTable();
@@ -82,6 +91,9 @@ public class jfLivro extends javax.swing.JFrame {
         jtfPreco = new javax.swing.JTextField();
         jbLimpar = new javax.swing.JButton();
         jbCancelar = new javax.swing.JButton();
+        jbEditar = new javax.swing.JButton();
+        jbDeletar = new javax.swing.JButton();
+        jbConfirmar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,7 +120,7 @@ public class jfLivro extends javax.swing.JFrame {
 
         jLabel7.setText("Preço");
 
-        jLabel8.setText("Editora");
+        jLEditora.setText("Editora");
 
         jtLivros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -126,6 +138,11 @@ public class jfLivro extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jtLivros.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtLivrosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtLivros);
 
         jbLimpar.setText("Limpar");
@@ -135,10 +152,34 @@ public class jfLivro extends javax.swing.JFrame {
             }
         });
 
-        jbCancelar.setText("Cancelar");
+        jbCancelar.setText("Sair");
         jbCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbCancelarActionPerformed(evt);
+            }
+        });
+
+        jbEditar.setText("Editar");
+        jbEditar.setEnabled(false);
+        jbEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEditarActionPerformed(evt);
+            }
+        });
+
+        jbDeletar.setText("Deletar");
+        jbDeletar.setEnabled(false);
+        jbDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbDeletarActionPerformed(evt);
+            }
+        });
+
+        jbConfirmar.setText("Confirmar");
+        jbConfirmar.setEnabled(false);
+        jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbConfirmarActionPerformed(evt);
             }
         });
 
@@ -158,7 +199,7 @@ public class jfLivro extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jtfAssunto))
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
@@ -178,17 +219,22 @@ public class jfLivro extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel8)
+                                        .addComponent(jLEditora)
                                         .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(jcbEditora, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addGap(0, 50, Short.MAX_VALUE)
-                                        .addComponent(jbSalvar)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jbLimpar)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jbCancelar))))
-                            .addComponent(jtfAutor))))
+                                    .addComponent(jcbEditora, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jtfAutor)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jbConfirmar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jbDeletar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jbEditar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbSalvar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jbLimpar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jbCancelar)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -210,7 +256,7 @@ public class jfLivro extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jtfISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(jLEditora))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -222,7 +268,10 @@ public class jfLivro extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbSalvar)
                     .addComponent(jbLimpar)
-                    .addComponent(jbCancelar))
+                    .addComponent(jbCancelar)
+                    .addComponent(jbEditar)
+                    .addComponent(jbDeletar)
+                    .addComponent(jbConfirmar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -242,6 +291,13 @@ public class jfLivro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void jTableFilterClear() {
+        DefaultTableModel model = (DefaultTableModel) jtLivros.getModel();
+        final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        jtLivros.setRowSorter(sorter);
+        sorter.setRowFilter(null);
+    }
+
     private void jbCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCancelarActionPerformed
         // TODO add your handling code here:
         jfLivro.this.dispose();
@@ -249,28 +305,143 @@ public class jfLivro extends javax.swing.JFrame {
 
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
         // TODO add your handling code here:
-        livro liv = new livro();
-        if (jtfTitulo.getText().isEmpty() && jtfAutor.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencher Titulo e Autor!");
-        } else {
-            liv.setIdLivro(cadLivros.addIdLiv());
-            liv.setTitulo(jtfTitulo.getText());
-            liv.setAssunto(jtfAssunto.getText());
-            liv.setAutor(jtfAutor.getText());
-            liv.setIsbn(jtfISBN.getText());
-            liv.setEstoque(Integer.parseInt(jtfEstoque.getText()));
-            liv.setPreco(Float.parseFloat(jtfPreco.getText()));
-            liv.setIdEditora(cadEditoras.getIdEditora(jcbEditora.getSelectedItem().toString()));
-            cadLivros.addLivro(liv);
+
+        try {
+            LivroServicos livroS = ServicosFactory.getLivroServicos();
+            EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+            livro l = new livro();
+
+            l.setTitulo(jtfTitulo.getText());
+            l.setAssunto(jtfAssunto.getText());
+            l.setAutor(jtfAutor.getText());
+            l.setIsbn(jtfISBN.getText());
+            l.setEstoque(Integer.parseInt(jtfEstoque.getText()));
+            l.setPreco(Float.parseFloat(jtfPreco.getText()));
+            l.setIdEditora(editoraS.pegarIDEditora(jcbEditora.getSelectedItem().toString()));
+            livroS.cadastrarLivro(l);
             jbLimpar.doClick();
-            this.addRowToTable();
-            JOptionPane.showMessageDialog(this, "Livro " + liv.getTitulo() + " cadastrado com sucesso!");
+            addRowToTableBD();
+            JOptionPane.showMessageDialog(this, "Livro '" + l.getTitulo() + "' cadastrado com sucesso!");
+        } catch (SQLException ex) {
+            Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }//GEN-LAST:event_jbSalvarActionPerformed
 
     private void jbLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimparActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jbLimparActionPerformed
+
+    private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            jbEditar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbDeletar.setEnabled(true);
+            jbConfirmar.setEnabled(true);
+            // jbLimpar.setText("Cancelar");
+
+            int linha = jtLivros.getSelectedRow();
+            String isbn = (String) jtLivros.getValueAt(linha, 4);
+
+            LivroServicos livroS = ServicosFactory.getLivroServicos();
+            EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+
+            livro L = livroS.pegarisbn(isbn);
+
+            jtfTitulo.setText(L.getTitulo());
+            jtfAssunto.setText(L.getAssunto());
+            jtfAutor.setText(L.getAutor());
+            jtfISBN.setText(L.getIsbn());
+            jtfEstoque.setText(Integer.toString(L.getEstoque()));
+            jtfPreco.setText(Integer.toString((int) L.getPreco()));
+            jcbEditora.setSelectedItem(L.getIdEditora());
+
+        } catch (SQLException ex) {
+            Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jbEditarActionPerformed
+
+    private void jbDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeletarActionPerformed
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            jbEditar.setEnabled(false);
+            int linha;
+            String isbn;
+            linha = jtLivros.getSelectedRow();
+            isbn = (String) jtLivros.getValueAt(linha, 4);
+            LivroServicos livroS = ServicosFactory.getLivroServicos();
+            livro L = livroS.pegarisbn(isbn);
+
+            Object[] resp = {"Sim", "Não"};
+            int resposta = JOptionPane.showOptionDialog(this,
+                    "Deseja realmente deletar " + L.getTitulo() + "?",
+                    ".: Deletar :.", JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.WARNING_MESSAGE, null, resp, resp[0]);
+            if (resposta == 0) {
+                livroS.deletar(L.getIdLivro());
+                //cadCarros.deletar(c);
+                addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "Livro deletado com sucesso!");
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Entendemos sua decisão!",
+                        ".: Deletar :.", JOptionPane.INFORMATION_MESSAGE);
+            }
+            jbLimpar.doClick();
+        } catch (SQLException ex) {
+            Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbDeletarActionPerformed
+
+    private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+        
+           
+
+        try {
+            LivroServicos livroS = ServicosFactory.getLivroServicos();
+            //EditoraServicos editoraS = ServicosFactory.geteditoraServicos();
+            livro L = livroS.pegarisbn(jtfISBN.getText());
+
+            L.setTitulo(jtfTitulo.getText());
+            L.setAssunto(jtfAssunto.getText());
+            L.setAutor(jtfAutor.getText());
+            L.setEstoque(Integer.parseInt(jtfEstoque.getText()));
+            L.setPreco(Float.parseFloat(jtfPreco.getText()));
+
+            livroS.atualizaLivro(L);
+            addRowToTableBD();
+        } catch (SQLException ex) {
+            Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        jbConfirmar.setEnabled(false);
+        jbLimpar.doClick();
+        jbSalvar.setEnabled(true);
+        jbLimpar.setEnabled(true);
+
+        jbLimpar.doClick();
+        jbLimpar.setText("Limpar");
+        jTableFilterClear();
+
+        String msg = "Dados atualizados com sucesso!";
+        JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        jtfISBN.setEnabled(true);
+        jcbEditora.setEnabled(true);
+
+    }//GEN-LAST:event_jbConfirmarActionPerformed
+
+    private void jtLivrosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtLivrosMouseClicked
+        // TODO add your handling code here:
+        jbDeletar.setEnabled(true);
+        jbEditar.setEnabled(true);
+    }//GEN-LAST:event_jtLivrosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -302,12 +473,18 @@ public class jfLivro extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new jfLivro().setVisible(true);
+                try {
+                    new jfLivro().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLEditora;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -315,10 +492,12 @@ public class jfLivro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbCancelar;
+    private javax.swing.JButton jbConfirmar;
+    private javax.swing.JButton jbDeletar;
+    private javax.swing.JButton jbEditar;
     private javax.swing.JButton jbLimpar;
     private javax.swing.JButton jbSalvar;
     private javax.swing.JComboBox<String> jcbEditora;

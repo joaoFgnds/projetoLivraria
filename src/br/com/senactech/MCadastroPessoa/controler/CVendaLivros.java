@@ -14,6 +14,7 @@ import br.com.senactech.MCadastroPessoa.model.vendaLivro;
  */
 public class CVendaLivros {
     ArrayList<vendaLivro> vendaLivros = new ArrayList<>();
+    int idVen = 1;
     
     public void addVendaLivro(vendaLivro vl){
         vendaLivros.add(vl);
@@ -22,5 +23,9 @@ public class CVendaLivros {
     public ArrayList<vendaLivro> getVendaLivros() {
         return vendaLivros;
     }    
+    
+         public int gerarId() {
+        return this.idVen++;
+    }
     
 }

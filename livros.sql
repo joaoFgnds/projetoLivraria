@@ -34,3 +34,9 @@ CREATE TABLE `livro` (
   `valor` decimal(10,2) NOT NULL,
   `ideditora` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*INSERT INTO cliente (idcliente, nome, enderecoCompleto, telefone, cpf, cnpj) 
+VALUES ('' ,'Evelyn Nair Bernardes','Avenida Parnarama','996096999','23121489194',null);*/
+
+#INSERT INTO livros (titulo, autor, isbn, edicao, editora, anoPublicacao, qtdePaginas, genero, idioma, quantidade) VALUES ('orgulho e preconceito', 'jane austen', 978-8544001820, 'luxo', 'martin claret', 2018, 424, 'romance', 2);

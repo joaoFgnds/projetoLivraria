@@ -12,7 +12,8 @@ import java.util.Date;
  * @author jairb
  */
 public class vendaLivro {
-
+    
+    private int idVenda;
     private int idCliente;
     private int idLivro;
     private int qtd;
@@ -22,7 +23,7 @@ public class vendaLivro {
     public vendaLivro() {
     }
 
-    public vendaLivro(int idCliente, int idLivro, int qtd, float subTotal, Date dataVenda) {
+    public vendaLivro(int idVenda, int idCliente, int idLivro, int qtd, float subTotal, Date dataVenda) {
         this.idCliente = idCliente;
         this.idLivro = idLivro;
         this.qtd = qtd;
@@ -44,6 +45,14 @@ public class vendaLivro {
 
     public void setIdLivro(int idLivro) {
         this.idLivro = idLivro;
+    }
+
+    public int getIdVenda() {
+        return idVenda;
+    }
+
+    public void setIdVenda(int idVenda) {
+        this.idVenda = idVenda;
     }
 
     public int getQtd() {

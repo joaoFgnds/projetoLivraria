@@ -3,8 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/view/jfVendaLivros.java</file>
             <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/Livraria_main/TLivrariaOOJF.java</file>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/view/jfLivro.java</file>
             <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/dao/ClienteDAO.java</file>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/services/LivroServicos.java</file>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/services/vendaServicos.java</file>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/model/cliente.java</file>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/dao/LivroDao.java</file>
+            <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/dao/vendaDAO.java</file>
             <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/view/jfCliente.java</file>
             <file>file:/C:/Users/faria/OneDrive/Documentos/NetBeansProjects/STech-LivrariaJF/src/br/com/senactech/MCadastroPessoa/services/ClienteServicos.java</file>
         </group>

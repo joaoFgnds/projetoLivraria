@@ -29,13 +29,48 @@ public class vendaDAO {
         try {
             //sql vai receber o comando SQL
             String sql;
-            sql = "insert into livro values (null, ' " + vVO.getIdCliente()+ ", "
+            sql = "insert into compra values (null, ' " + vVO.getIdCliente()+ ", "
                     + vVO.getIdLivro()+ ", ' " + vVO.getDataVenda()+ " ' ,"
                     + vVO.getQtd()+ " )";
             stat.execute(sql);
         } catch (SQLException e) {
             throw new  SQLException("Erro ao comprar livro ! \n" + e.getMessage());
         }finally {
+            stat.close();
+            con.close();
+        }
+    }
+    
+     public ArrayList<vendaLivro> buscarVendaLivros() throws SQLException {
+        //busca conexão com o BD
+        Connection con = conexao.getConexao();
+        //cria um objeto stat reponsavel por enviar os comandos sql do Java
+        //para serem executados dentro do DB
+        Statement stat = con.createStatement();
+        try {
+            String sql;
+            sql = "Select * from Venda";
+            //atribuo ao rs o resultado da exec~ção da query no banco
+            ResultSet rs = stat.executeQuery(sql);
+            ArrayList<vendaLivro> vendas = new ArrayList<>();
+            while (rs.next()) {
+                vendaLivro v = new vendaLivro();
+                //lado do java||lado do banco
+                v.setIdVenda(rs.getInt("idVenda"));
+                v.setIdCliente(rs.getInt("idCliente"));
+                v.setIdLivro(rs.getInt("idLivro"));
+                v.setQtd(rs.getInt("quantCompra"));
+                v.setSubTotal(rs.getInt("subTotal"));  
+               
+                //v.setDataVenda(rs.getDate("dataVenda").toLocalDate());
+                
+                vendas.add(v);
+            }
+            return vendas;
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao buscar vendas \n" + e.getMessage());
+
+        } finally {
             stat.close();
             con.close();
         }

@@ -25,6 +25,7 @@ import javax.swing.JTextArea;
 import br.com.senactech.MCadastroPessoa.view.jfCliente;
 import br.com.senactech.MCadastroPessoa.view.jfEditora;
 import br.com.senactech.MCadastroPessoa.view.jfLivro;
+import br.com.senactech.MCadastroPessoa.view.jfVendaLivros;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,6 +79,13 @@ public class TLivrariaOOJF extends JFrame implements ActionListener {
         menuItem.addActionListener(this);
         menu.add(menuItem);
 
+        //Vendas
+        menuItem = new JMenuItem("Vendas",
+                KeyEvent.VK_V);
+        menuItem.setActionCommand("mVendas");
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
+
         return menuBar;
     }
 
@@ -91,16 +99,31 @@ public class TLivrariaOOJF extends JFrame implements ActionListener {
                 Logger.getLogger(TLivrariaOOJF.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         if ("mEditoras".equals(e.getActionCommand())) {
-            jfEditora ed = new jfEditora();
-            ed.setVisible(true);
-            ed.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            try {
+                jfEditora ed = new jfEditora();
+                ed.setVisible(true);
+                ed.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            } catch (SQLException ex) {
+                Logger.getLogger(TLivrariaOOJF.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+
         if ("mLivros".equals(e.getActionCommand())) {
-            jfLivro liv = new jfLivro();
-            liv.setVisible(true);
-            liv.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            try {
+                jfLivro liv = new jfLivro();
+                liv.setVisible(true);
+                liv.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            } catch (SQLException ex) {
+                Logger.getLogger(TLivrariaOOJF.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if ("mVendas".equals(e.getActionCommand())) {
+            jfVendaLivros venda = new jfVendaLivros();
+            venda.setVisible(true);
+            venda.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         }
 
     }
